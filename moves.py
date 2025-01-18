@@ -1,7 +1,12 @@
 from figure import Figure
 from tetris import Tetris
 
+
 def get_next_states(tetris: Tetris, figure: Figure):
+
+    '''
+        Returns a big list of all possible board states using the current board state and the next piece
+    '''
 
     state = [[0 for _ in range(tetris.width)] for _ in range(tetris.height)]
 
@@ -13,43 +18,47 @@ def get_next_states(tetris: Tetris, figure: Figure):
             else:
                 state[i][j] = 1
 
+    # Stores output values
     next_states = []
+
     rotation_count = len(figure.piece)
-    for i in figure.piece_info:
-        next_states.append()
-    
 
-    # find all possible moves
-    match figure.piece:
+    for i in range(rotation_count):
 
-        case Figure.pieceO:
-            pass
+        for j in range(figure.piece_info[i][Figure.info_possibilities] - 1):
+            
+            figure_copy = figure.copy()
+            figure_copy.x = j
 
-        case Figure.pieceI:
-            pass
+            # Rotate copy based on outer loop
+            for k in range(i):
+                figure_copy.rotate()
 
-        case Figure.pieceS:
-            pass
+            next_tetris = Tetris(20, 10)
+            next_tetris.figure = figure_copy
 
-        case Figure.pieceZ:
-            pass
+            while (True):
 
-        case Figure.pieceT:
-            pass
+                figure_copy.y += 1
 
-        case Figure.pieceJ:
-            pass
+                if next_tetris.intersects():
+                    figure_copy.y -= 1
+                    break
 
-        case Figure.pieceL:
-            pass
+            next_tetris.freeze()
 
+            next_states.append(next_tetris.field)
 
-    # store the board state after each move
+    return next_states
 
 
 
 if __name__ == "__main__":
-    tetris = Tetris(20, 10)
-    figure = Figure(3, 0)
+    tetris = Tetris(20, 10)  # Initialize a game with 20 rows and 10 columns
+    figure = Figure(3, 0)    # Initialize the figure (you can modify this to set up a specific piece)
 
-    get_next_states(tetris, figure)
+    next_states = get_next_states(tetris, figure)
+    for idx, state in enumerate(next_states):
+        print(f"Next State {idx+1}:")
+        for row in state:
+            print(row)

@@ -68,6 +68,17 @@ class Figure:
         self.piece = self.figures[self.type]
         self.piece_info = self.figures_info[self.type]
 
+    def copy(self):
+
+        ret = Figure(self.x, self.y)
+        ret.type = self.type
+        ret.color = self.color
+        ret.rotation = self.rotation
+        ret.piece = self.piece
+        ret.piece_info = self.piece_info
+
+        return ret
+
     def image(self):
         return self.piece[self.rotation]
 
