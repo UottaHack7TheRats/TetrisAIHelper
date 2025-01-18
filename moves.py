@@ -25,7 +25,7 @@ def get_next_states(tetris: Tetris, figure: Figure):
 
     for i in range(rotation_count):
 
-        for j in range(figure.piece_info[i][Figure.info_possibilities] - 1):
+        for j in range(figure.piece_info[i][Figure.info_possibilities]):
             
             figure_copy = figure.copy()
             figure_copy.x = j
@@ -33,6 +33,9 @@ def get_next_states(tetris: Tetris, figure: Figure):
             # Rotate copy based on outer loop
             for k in range(i):
                 figure_copy.rotate()
+
+            offset = figure_copy.piece_info[i][Figure.info_empty_space]
+            figure_copy.x -= offset
 
             next_tetris = Tetris(20, 10)
             next_tetris.figure = figure_copy
