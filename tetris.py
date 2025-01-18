@@ -1,9 +1,150 @@
 import pygame
 import random
 
-import color as Color
-from figure import Figure
-from tetris import Tetris
+# Define colors
+class Color:
+    black = (0, 0, 0)
+    purple = (120, 37, 179)
+    cyan = (100, 179, 179)
+    darkred = (80, 34, 22)
+    green = (80, 134, 22)
+    red = (180, 34, 22)
+    pink = (180, 34, 122)
+
+colors = [
+    Color.black, 
+    Color.purple, 
+    Color.cyan, 
+    Color.darkred, 
+    Color.green, 
+    Color.red, 
+    Color.pink
+]
+
+class Figure:
+
+
+    # The following is how the pieces are defined, as well as their rotations
+    # The numbers in the inner lists represent positions in a 4x4 matrix. as follows:
+
+    #   0    1    2    3
+    #   4    5    6    7
+    #   8    9    10   11
+    #   12   13   14   15
+
+    pieceO = [[1, 2, 5, 6]]
+    pieceI = [[1, 5, 9, 13], [4, 5, 6, 7]]
+    pieceS = [[4, 5, 9, 10], [2, 6, 5, 9]]
+    pieceZ = [[6, 7, 9, 10], [1, 5, 6, 10]]
+    pieceT = [[1, 4, 5, 6], [1, 4, 5, 9], [4, 5, 6, 9], [1, 5, 6, 9]]
+    pieceJ = [[1, 2, 5, 9], [0, 4, 5, 6], [1, 5, 9, 8], [4, 5, 6, 10]]
+    pieceL = [[1, 2, 6, 10], [5, 6, 7, 9], [2, 6, 10, 11], [3, 5, 6, 7]]
+
+    # This list just hold the pieces for easier access (via index)
+
+    figures = [
+        pieceO,
+        pieceI,
+        pieceS,
+        pieceZ,
+        pieceT,
+        pieceJ,
+        pieceL
+    ]
+
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.type = random.randint(0, len(self.figures) - 1)
+        self.color = random.randint(1, len(colors) - 1)
+        self.rotation = 0
+
+    def image(self):
+        return self.figures[self.type][self.rotation]
+
+    def rotate(self):
+        self.rotation = (self.rotation + 1) % len(self.figures[self.type])
+
+class Tetris:
+    def __init__(self, height, width):
+        self.level = 1
+        self.score = 0
+        self.lines_cleared = 0
+        self.state = "start"
+        self.field = [[0 for _ in range(width)] for _ in range(height)]
+        self.height = height
+        self.width = width
+        self.x = 100
+        self.y = 60
+        self.zoom = 20
+        self.figure = None
+
+    def new_figure(self):
+        self.figure = Figure(3, 0)
+
+    def intersects(self):
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    if i + self.figure.y >= self.height or \
+                            j + self.figure.x >= self.width or \
+                            j + self.figure.x < 0 or \
+                            self.field[i + self.figure.y][j + self.figure.x] > 0:
+                        return True
+        return False
+
+    def break_lines(self):
+        lines = 0
+        for i in range(1, self.height):
+            if all(self.field[i][j] > 0 for j in range(self.width)):
+                lines += 1
+                for k in range(i, 0, -1):
+                    self.field[k] = self.field[k - 1][:]
+                self.field[0] = [0 for _ in range(self.width)]
+        self.update_score(lines)
+        self.lines_cleared += lines
+        self.update_level()
+
+    def update_score(self, lines):
+        scoring = {1: 40, 2: 100, 3: 300, 4: 1200}
+        self.score += scoring.get(lines, 0) * (self.level + 1)
+
+    def update_level(self):
+        if self.lines_cleared >= self.level * 10:
+            self.level += 1
+
+    def go_space(self):
+        while not self.intersects():
+            self.figure.y += 1
+        self.figure.y -= 1
+        self.freeze()
+
+    def go_down(self):
+        self.figure.y += 1
+        if self.intersects():
+            self.figure.y -= 1
+            self.freeze()
+
+    def freeze(self):
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in self.figure.image():
+                    self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
+        self.break_lines()
+        self.new_figure()
+        if self.intersects():
+            self.state = "gameover"
+
+    def go_side(self, dx):
+        self.figure.x += dx
+        if self.intersects():
+            self.figure.x -= dx
+
+    def rotate(self):
+        self.figure.rotate()
+        if self.intersects():
+            self.figure.rotation = (self.figure.rotation - 1) % len(self.figure.figures[self.figure.type])
 
 # Initialize pygame
 pygame.init()
@@ -77,6 +218,22 @@ while not done:
                     pygame.draw.rect(screen, colors[game.figure.color], [
                         game.x + game.zoom * (j + game.figure.x) + 1,
                         game.y + game.zoom * (i + game.figure.y) + 1,
+                        game.zoom - 2,
+                        game.zoom - 2
+                    ])
+
+    # Display next piece
+    if game.next_figure is not None:
+        font_next = pygame.font.SysFont('Calibri', 20, True, False)
+        text_next = font_next.render("Next Piece:", True, (0, 0, 0))
+        screen.blit(text_next, [300, 50])
+
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in game.next_figure.image():
+                    pygame.draw.rect(screen, colors[game.next_figure.color], [
+                        300 + game.zoom * j + 1,
+                        80 + game.zoom * i + 1,
                         game.zoom - 2,
                         game.zoom - 2
                     ])
