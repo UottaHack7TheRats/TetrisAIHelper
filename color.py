@@ -6,12 +6,12 @@ green = (80, 134, 22)
 red = (180, 34, 22)
 pink = (180, 34, 122)
 
-allColors = [
-    Color.black, 
-    Color.purple, 
-    Color.cyan, 
-    Color.darkred, 
-    Color.green, 
-    Color.red, 
-    Color.pink
+all_colors = [
+    black, 
+    purple, 
+    cyan, 
+    darkred, 
+    green, 
+    red, 
+    pink
 ]

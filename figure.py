@@ -1,3 +1,7 @@
+import random
+
+import color as Color
+
 class Figure:
 
     # The following is how the pieces are defined, as well as their rotations
@@ -33,7 +37,7 @@ class Figure:
         self.x = x
         self.y = y
         self.type = random.randint(0, len(self.figures) - 1)
-        self.color = random.randint(1, len(colors) - 1)
+        self.color = random.randint(1, len(Color.all_colors) - 1)
         self.rotation = 0
 
     def image(self):
