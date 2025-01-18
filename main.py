@@ -6,6 +6,29 @@ from figure import Figure
 from tetris import Tetris
 from gameStateEvalution import TetrisStateRanker
 
+
+# def get_ghost_position(figure, field):
+#     # Check where the figure will land by moving it down until it collides
+#     ghost_position = figure.y
+#     while not game.intersects(piece):
+#         ghost_position += 1
+#     return ghost_position
+def intersects(piece):
+    for i in range(4):
+        for j in range(4):
+            if i * 4 + j in piece.image():
+                if i + piece.y >= game.height or \
+                        j + piece.x >= game.width or \
+                        j + piece.x < 0 or \
+                        game.field[i + piece.y][j + piece.x] > 0:
+                    return True
+    return False
+def moveGhostDown(figure):
+    piece = figure.copy()
+    while not intersects(piece):
+        piece.y += 1
+    piece.y -= 1
+    return piece
 # Initialize pygame
 pygame.init()
 
@@ -74,6 +97,25 @@ while not done:
                     game.zoom - 2
                 ])
 
+
+
+    # Inside your main loop, just before drawing the current figure, add:
+    if game.figure is not None:
+        piece = moveGhostDown(game.figure)
+
+        # Draw the ghost piece in a lighter color (for example, a semi-transparent color)
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in game.figure.image():
+                    pygame.draw.rect(screen, (128, 128, 128), [  # Lighter color for ghost piece
+                        game.x + game.zoom * (j + piece.x) + 1,
+                        game.y + game.zoom * (i + piece.y) + 1,
+                        game.zoom - 2,
+                        game.zoom - 2
+                    ])
+
+
+#display game
     if game.figure is not None:
         for i in range(4):
             for j in range(4):
@@ -117,4 +159,8 @@ while not done:
     pygame.display.flip()
     clock.tick(fps)
 
+
+
 pygame.quit()
+
+
