@@ -4,6 +4,7 @@ import random
 import color as Color
 from figure import Figure
 from tetris import Tetris
+from gameStateEvalution import TetrisStateRanker
 
 # Initialize pygame
 pygame.init()
@@ -31,6 +32,10 @@ while not done:
     if counter % (fps // game.level // 2) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
+            ranker = TetrisStateRanker(game.field)
+            print(game.field)
+            state_rank = ranker.rank_state()
+            print(f"Current game state rank: {state_rank}")
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
