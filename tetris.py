@@ -49,9 +49,11 @@ class Tetris:
         self.y = 60
         self.zoom = 20
         self.figure = None
+        self.next_figure = Figure(0, 0)  # Initialize the next figure
 
     def new_figure(self):
-        self.figure = Figure(3, 0)
+        self.figure = self.next_figure  # Set the current figure to the next figure
+        self.next_figure = Figure(0, 0)  # Generate a new next figure
 
     def intersects(self):
         for i in range(4):
@@ -188,6 +190,22 @@ while not done:
                     pygame.draw.rect(screen, colors[game.figure.color], [
                         game.x + game.zoom * (j + game.figure.x) + 1,
                         game.y + game.zoom * (i + game.figure.y) + 1,
+                        game.zoom - 2,
+                        game.zoom - 2
+                    ])
+
+    # Display next piece
+    if game.next_figure is not None:
+        font_next = pygame.font.SysFont('Calibri', 20, True, False)
+        text_next = font_next.render("Next Piece:", True, (0, 0, 0))
+        screen.blit(text_next, [300, 50])
+
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in game.next_figure.image():
+                    pygame.draw.rect(screen, colors[game.next_figure.color], [
+                        300 + game.zoom * j + 1,
+                        80 + game.zoom * i + 1,
                         game.zoom - 2,
                         game.zoom - 2
                     ])
