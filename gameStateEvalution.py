@@ -59,7 +59,7 @@ class TetrisStateRanker:
         completed_lines = self.calculate_completed_lines()
 
         # A simple ranking score where lower is better (more favorable)
-        rank_score = bumpiness * 1.2 + holes * 1.5 + aggregate_height * 0.8 - completed_lines * 2
+        rank_score = bumpiness * 1.2 + holes * 5 + aggregate_height * 0.8 - completed_lines * 2
 
         return rank_score
 

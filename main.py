@@ -70,9 +70,9 @@ while not done:
             next_states_scored.sort()
             decision_tree_best = next_states_scored[0][1]
 
-            print("Score: ", next_states_scored[0][0])
-            for row in next_states_scored[0][1]:
-                print(row)
+            # print("Score: ", next_states_scored[0][0])
+            # for row in next_states_scored[0][1]:
+            #     print(row)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:

@@ -39,8 +39,16 @@ class Tetris:
         ret.x = self.x
         ret.y = self.y
         ret.zoom = self.zoom
-        ret.figure = self.figure
-        ret.next_figure = self.next_figure
+
+        if self.figure is not None:
+            ret.figure = self.figure.copy()
+        else:
+            ret.figure = None
+
+        if self.next_figure is not None:
+            ret.next_figure = self.next_figure.copy()
+        else:
+            ret.next_figure = None
 
         for i in range (self.height):
             for j in range(self.width):
@@ -52,14 +60,31 @@ class Tetris:
         self.figure = Figure(3, 0)
 
     def intersects(self):
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.figure.image():
-                    if i + self.figure.y >= self.height or \
-                            j + self.figure.x >= self.width or \
-                            j + self.figure.x < 0 or \
-                            self.field[i + self.figure.y][j + self.figure.x] > 0:
-                        return True
+
+        if self.figure is None:
+            return False
+
+        # Loop through all coordinates in the pieces image
+        try:
+            for i in self.figure.image():
+
+                x_coord = self.figure.x + (i % 4)
+                y_coord = self.figure.y + (i // 4)
+
+                below_floor = y_coord >= self.height
+                outside_left = x_coord < 0
+                outside_right = x_coord >= self.width
+                inside_piece = self.field[y_coord][x_coord] > 0
+
+                # Invalid position
+                if below_floor or outside_left or outside_right or inside_piece:
+                    return True
+
+        # IndexError means the piece lies outside the game field
+        except IndexError:
+            return True
+
+        # If the loop finished without returning, theres no intersection
         return False
 
     def break_lines(self):
@@ -85,27 +110,42 @@ class Tetris:
         while not self.intersects():
             self.figure.y += 1
         self.figure.y -= 1
-        self.freeze()
+        self.place_piece()
 
     def go_down(self):
         self.figure.y += 1
         if self.intersects():
             self.figure.y -= 1
-            self.freeze()
+            self.place_piece()
 
-    def freeze(self):
+    def place_piece(self):
         try:
-            for i in range(4):
-                for j in range(4):
-                    if i * 4 + j in self.figure.image():
-                        self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
-        except:
-            pass
+            for i in self.figure.image():
+                    
+                x_coord = self.figure.x + (i % 4)
+                y_coord = self.figure.y + (i // 4)
+
+                self.field[y_coord][x_coord] = self.figure.color
+
+        except IndexError:
+            print("place_piece failed")
         
         self.break_lines()
         self.new_figure()
         if self.intersects():
             self.state = "gameover"
+
+    def place_piece_no_update(self):
+        try:
+            for i in self.figure.image():
+                    
+                x_coord = self.figure.x + (i % 4)
+                y_coord = self.figure.y + (i // 4)
+
+                self.field[y_coord][x_coord] = self.figure.color
+
+        except IndexError:
+            print("place_piece_no_update failed")
 
     def go_side(self, dx):
         self.figure.x += dx

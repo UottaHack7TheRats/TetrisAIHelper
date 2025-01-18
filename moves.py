@@ -29,9 +29,10 @@ def get_next_states(tetris: Tetris, figure: Figure):
             
             figure_copy = figure.copy()
             figure_copy.x = j
+            figure_copy.y = 0
 
             # Rotate copy based on outer loop
-            for k in range(i):
+            while figure_copy.rotation != i:
                 figure_copy.rotate()
 
             offset = figure_copy.piece_info[i][Figure.info_empty_space]
@@ -40,15 +41,12 @@ def get_next_states(tetris: Tetris, figure: Figure):
             next_tetris = tetris.copy()
             next_tetris.figure = figure_copy
 
-            while (True):
-
+            while not next_tetris.intersects():
                 figure_copy.y += 1
 
-                if next_tetris.intersects():
-                    figure_copy.y -= 1
-                    break
+            figure_copy.y -= 1
 
-            next_tetris.freeze()
+            next_tetris.place_piece_no_update()
 
             next_states.append(next_tetris.field)
 
