@@ -1,6 +1,16 @@
 from figure import Figure
 
 class Tetris:
+
+    # Score amounts for each amount of lines cleared
+
+    scoring = [
+        40,         # 1 line cleared
+        100,        # 2 lines cleared
+        300,        # 3 lines cleared
+        1200        # 4 lines cleared
+    ]
+
     def __init__(self, height, width):
         self.level = 1
         self.score = 0
@@ -42,8 +52,7 @@ class Tetris:
         self.update_level()
 
     def update_score(self, lines):
-        scoring = {1: 40, 2: 100, 3: 300, 4: 1200}
-        self.score += scoring.get(lines, 0) * (self.level + 1)
+        self.score += this.scoring[lines - 1] * (self.level + 1)
 
     def update_level(self):
         if self.lines_cleared >= self.level * 10:

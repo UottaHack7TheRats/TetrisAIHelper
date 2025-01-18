@@ -56,11 +56,11 @@ while not done:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
 
-    screen.fill((255, 255, 255))
+    screen.fill((0, 0, 0))
 
     for i in range(game.height):
         for j in range(game.width):
-            pygame.draw.rect(screen, (128, 128, 128), [
+            pygame.draw.rect(screen, (72, 72, 72), [
                 game.x + game.zoom * j,
                 game.y + game.zoom * i,
                 game.zoom,
@@ -88,7 +88,7 @@ while not done:
     # Display next piece
     if game.next_figure is not None:
         font_next = pygame.font.SysFont('Calibri', 20, True, False)
-        text_next = font_next.render("Next Piece:", True, (0, 0, 0))
+        text_next = font_next.render("Next Piece:", True, (255, 255, 255))
         screen.blit(text_next, [300, 50])
 
         for i in range(4):
@@ -102,8 +102,8 @@ while not done:
                     ])
 
     font = pygame.font.SysFont('Calibri', 25, True, False)
-    text_score = font.render(f"Score: {game.score}", True, (0, 0, 0))
-    text_level = font.render(f"Level: {game.level}", True, (0, 0, 0))
+    text_score = font.render(f"Score: {game.score}", True, (255, 255, 255))
+    text_level = font.render(f"Level: {game.level}", True, (255, 255, 255))
     screen.blit(text_score, [0, 0])
     screen.blit(text_level, [0, 30])
 
