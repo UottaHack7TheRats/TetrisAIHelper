@@ -33,7 +33,6 @@ while not done:
         if game.state == "start":
             game.go_down()
             ranker = TetrisStateRanker(game.field)
-            print(game.field)
             state_rank = ranker.rank_state()
             print(f"Current game state rank: {state_rank}")
 
