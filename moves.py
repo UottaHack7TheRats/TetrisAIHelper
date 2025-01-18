@@ -34,7 +34,7 @@ def get_next_states(tetris: Tetris, figure: Figure):
             for k in range(i):
                 figure_copy.rotate()
 
-            offset = figure_copy.piece_info[i][Figure.empty_space]
+            offset = figure_copy.piece_info[i][Figure.info_empty_space]
             figure_copy.x -= offset
 
             next_tetris = Tetris(20, 10)

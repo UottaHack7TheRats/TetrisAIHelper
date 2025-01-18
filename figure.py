@@ -44,7 +44,7 @@ class Figure:
     info_width = 0
     info_height = 1
     info_possibilities = 2
-    empty_space = 3
+    info_empty_space = 3
 
     pieceO_info = [[2, 2, 9, 1]]
     pieceI_info = [[1, 4, 10, 1], [4, 1, 7, 0]]
