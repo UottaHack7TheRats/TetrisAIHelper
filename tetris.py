@@ -52,7 +52,7 @@ class Tetris:
         self.update_level()
 
     def update_score(self, lines):
-        self.score += this.scoring[lines - 1] * (self.level + 1)
+        self.score += self.scoring[lines - 1] * (self.level + 1)
 
     def update_level(self):
         if self.lines_cleared >= self.level * 10:
