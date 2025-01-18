@@ -8,6 +8,7 @@ darkred = (80, 34, 22)
 green = (80, 134, 22)
 red = (180, 34, 22)
 pink = (180, 34, 122)
+yellow = (255, 255, 0)
 
 all_colors = [
     black, 

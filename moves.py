@@ -37,7 +37,7 @@ def get_next_states(tetris: Tetris, figure: Figure):
             offset = figure_copy.piece_info[i][Figure.info_empty_space]
             figure_copy.x -= offset
 
-            next_tetris = Tetris(20, 10)
+            next_tetris = tetris.copy()
             next_tetris.figure = figure_copy
 
             while (True):
@@ -59,6 +59,8 @@ def get_next_states(tetris: Tetris, figure: Figure):
 if __name__ == "__main__":
     tetris = Tetris(20, 10)  # Initialize a game with 20 rows and 10 columns
     figure = Figure(3, 0)    # Initialize the figure (you can modify this to set up a specific piece)
+
+    tetris.field[19][0] = 1
 
     next_states = get_next_states(tetris, figure)
     for idx, state in enumerate(next_states):

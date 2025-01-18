@@ -25,6 +25,29 @@ class Tetris:
         self.figure = None
         self.next_figure = Figure(0, 0)
 
+    def copy(self):
+
+        ret = Tetris(self.height, self.width)
+
+        ret.level = self.level
+        ret.score = self.score
+        ret.lines_cleared = self.lines_cleared
+        ret.state = self.state
+        ret.field = [[0 for _ in range(self.width)] for _ in range(self.height)]
+        ret.height = self.height
+        ret.width = self.width
+        ret.x = self.x
+        ret.y = self.y
+        ret.zoom = self.zoom
+        ret.figure = self.figure
+        ret.next_figure = self.next_figure
+
+        for i in range (self.height):
+            for j in range(self.width):
+                ret.field[i][j] = self.field[i][j]
+
+        return ret
+
     def new_figure(self):
         self.figure = Figure(3, 0)
 
@@ -71,10 +94,14 @@ class Tetris:
             self.freeze()
 
     def freeze(self):
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in self.figure.image():
-                    self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
+        try:
+            for i in range(4):
+                for j in range(4):
+                    if i * 4 + j in self.figure.image():
+                        self.field[i + self.figure.y][j + self.figure.x] = self.figure.color
+        except:
+            pass
+        
         self.break_lines()
         self.new_figure()
         if self.intersects():

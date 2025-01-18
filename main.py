@@ -5,6 +5,7 @@ import color as Color
 from figure import Figure
 from tetris import Tetris
 from gameStateEvalution import TetrisStateRanker
+from moves import get_next_states
 
 
 # def get_ghost_position(figure, field):
@@ -45,6 +46,8 @@ game = Tetris(20, 10)
 counter = 0
 pressing_down = False
 
+decision_tree_best = None
+
 while not done:
     if game.figure is None:
         game.new_figure()
@@ -55,9 +58,21 @@ while not done:
     if counter % (fps // game.level // 2) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
-            ranker = TetrisStateRanker(game.field)
-            state_rank = ranker.rank_state()
-            print(f"Current game state rank: {state_rank}")
+
+            next_states = get_next_states(game, game.figure)
+            next_states_scored = []
+
+            for state in next_states:
+                ranker = TetrisStateRanker(state)
+                score = ranker.rank_state()
+                next_states_scored.append([score, state])
+
+            next_states_scored.sort()
+            decision_tree_best = next_states_scored[0][1]
+
+            print("Score: ", next_states_scored[0][0])
+            for row in next_states_scored[0][1]:
+                print(row)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -96,6 +111,14 @@ while not done:
                     game.zoom - 2,
                     game.zoom - 2
                 ])
+            elif decision_tree_best is not None:
+                if decision_tree_best[i][j] > 0:
+                    pygame.draw.rect(screen, Color.yellow, [
+                        game.x + game.zoom * j + 1,
+                        game.y + game.zoom * i + 1,
+                        game.zoom - 2,
+                        game.zoom - 2
+                    ])
 
 
 
@@ -115,7 +138,7 @@ while not done:
                     ])
 
 
-#display game
+    #display game
     if game.figure is not None:
         for i in range(4):
             for j in range(4):
