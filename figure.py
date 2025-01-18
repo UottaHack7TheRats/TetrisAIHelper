@@ -14,11 +14,11 @@ class Figure:
 
     pieceO = [[1, 2, 5, 6]]
     pieceI = [[1, 5, 9, 13], [4, 5, 6, 7]]
-    pieceS = [[4, 5, 9, 10], [2, 6, 5, 9]]
-    pieceZ = [[6, 7, 9, 10], [1, 5, 6, 10]]
+    pieceS = [[0, 1, 5, 6], [2, 6, 5, 9]]
+    pieceZ = [[1, 2, 4, 5], [1, 5, 6, 10]]
     pieceT = [[1, 4, 5, 6], [1, 5, 6, 9], [4, 5, 6, 9], [1, 4, 5, 9]]
     pieceJ = [[0, 4, 5, 6], [1, 2, 5, 9], [4, 5, 6, 10], [1, 5, 9, 8]]
-    pieceL = [[3, 5, 6, 7], [2, 6, 10, 11], [5, 6, 7, 9], [1, 2, 6, 10]]
+    pieceL = [[2, 4, 5, 6], [1, 5, 9, 10], [4, 5, 6, 8], [0, 1, 5, 9]]
 
     # This list just hold the pieces for easier access (via index)
 
@@ -34,19 +34,25 @@ class Figure:
 
     # The following is values used for finding possible positions with each piece
     # Outer list defines rotations, while inner lists define other traits:
-    # Traits in order are: width, height, possible x positions
+    # Traits in order are: 
+    # width, 
+    # height, 
+    # possible x positions, 
+    # empty columns on left
 
+    # Constants for indexing
     info_width = 0
     info_height = 1
     info_possibilities = 2
+    empty_space = 3
 
-    pieceO_info = [[2, 2, 9]]
-    pieceI_info = [[1, 4, 10], [4, 1, 7]]
-    pieceS_info = [[3, 2, 8], [2, 3, 9]]
-    pieceZ_info = [[3, 2, 8], [2, 3, 9]]
-    pieceT_info = [[3, 2, 8], [2, 3, 9], [3, 2, 8], [2, 3, 9]]
-    pieceJ_info = [[3, 2, 8], [2, 3, 9], [3, 2, 8], [2, 3, 9]]
-    pieceL_info = [[3, 2, 8], [2, 3, 9], [3, 2, 8], [2, 3, 9]]
+    pieceO_info = [[2, 2, 9, 1]]
+    pieceI_info = [[1, 4, 10, 1], [4, 1, 7, 0]]
+    pieceS_info = [[3, 2, 8, 0], [2, 3, 9, 1]]
+    pieceZ_info = [[3, 2, 8, 0], [2, 3, 9, 1]]
+    pieceT_info = [[3, 2, 8, 0], [2, 3, 9, 1], [3, 2, 8, 0], [2, 3, 9, 0]]
+    pieceJ_info = [[3, 2, 8, 0], [2, 3, 9, 1], [3, 2, 8, 0], [2, 3, 9, 0]]
+    pieceL_info = [[3, 2, 8, 0], [2, 3, 9, 1], [3, 2, 8, 0], [2, 3, 9, 0]]
 
     figures_info = [
         pieceO_info,
