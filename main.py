@@ -63,7 +63,7 @@ while not done:
             next_states_scored = []
 
             for state in next_states:
-                ranker = TetrisStateRanker(state)
+                ranker = TetrisStateRanker(state[0])
                 score = ranker.rank_state()
                 next_states_scored.append([score, state])
 
@@ -88,6 +88,8 @@ while not done:
                 game.go_side(1)
             if event.key == pygame.K_SPACE:
                 game.go_space()
+            if event.key == pygame.K_KP_ENTER:
+                game.go_AI()
             if event.key == pygame.K_ESCAPE:
                 game.__init__(20, 10)
         if event.type == pygame.KEYUP:
@@ -112,7 +114,7 @@ while not done:
                     game.zoom - 2
                 ])
             elif decision_tree_best is not None:
-                if decision_tree_best[i][j] > 0:
+                if decision_tree_best[0][i][j] > 0:
                     pygame.draw.rect(screen, Color.yellow, [
                         game.x + game.zoom * j + 1,
                         game.y + game.zoom * i + 1,
@@ -133,6 +135,19 @@ while not done:
                     pygame.draw.rect(screen, (128, 128, 128), [  # Lighter color for ghost piece
                         game.x + game.zoom * (j + piece.x) + 1,
                         game.y + game.zoom * (i + piece.y) + 1,
+                        game.zoom - 2,
+                        game.zoom - 2
+                    ])
+    if decision_tree_best is not None:
+        recomended = moveGhostDown(decision_tree_best[1])
+
+    # Draw the RECOMENED
+        for i in range(4):
+            for j in range(4):
+                if i * 4 + j in recomended.image():
+                    pygame.draw.rect(screen, (255, 128, 128), [   
+                        game.x + game.zoom * (j + recomended.x) + 1,
+                        game.y + game.zoom * (i + recomended.y) + 1,
                         game.zoom - 2,
                         game.zoom - 2
                     ])

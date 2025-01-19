@@ -48,7 +48,7 @@ def get_next_states(tetris: Tetris, figure: Figure):
 
             next_tetris.place_piece_no_update()
 
-            next_states.append(next_tetris.field)
+            next_states.append((next_tetris.field,next_tetris.figure))
 
     return next_states
 

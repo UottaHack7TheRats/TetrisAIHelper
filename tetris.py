@@ -117,6 +117,7 @@ class Tetris:
         if self.intersects():
             self.figure.y -= 1
             self.place_piece()
+    #def go_AI(self)
 
     def place_piece(self):
         try:
