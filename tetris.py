@@ -25,6 +25,8 @@ class Tetris:
         self.figure = None
         self.next_figure = Figure(0, 0)
 
+        self.procNN = True
+
     def copy(self):
 
         ret = Tetris(self.height, self.width)
@@ -138,6 +140,8 @@ class Tetris:
         self.new_figure()
         if self.intersects():
             self.state = "gameover"
+
+        self.procNN = True
 
     def place_piece_no_update(self):
         try:
