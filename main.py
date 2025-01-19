@@ -190,25 +190,20 @@ while not done:
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in game.figure.image():
-                    pygame.draw.rect(screen, (128, 128, 128), [  # Lighter color for ghost piece
-                        game.x + game.zoom * (j + piece.x) + 1,
-                        game.y + game.zoom * (i + piece.y) + 1,
-                        game.zoom - 2,
-                        game.zoom - 2
-                    ])
-    if decision_tree_best is not None:
-        recomended = moveGhostDown(decision_tree_best[1])
+                    
+                    piece_color = Color.all_colors[game.figure.color]
 
-    # Draw the RECOMENED
-        for i in range(4):
-            for j in range(4):
-                if i * 4 + j in recomended.image():
-                    pygame.draw.rect(screen, (255, 128, 128), [   
-                        game.x + game.zoom * (j + recomended.x) + 1,
-                        game.y + game.zoom * (i + recomended.y) + 1,
-                        game.zoom - 2,
-                        game.zoom - 2
-                    ])
+                    pygame.draw.rect(
+                        screen, 
+                        piece_color, 
+                        [  # Lighter color for ghost piece
+                            game.x + game.zoom * (j + piece.x) + 1,
+                            game.y + game.zoom * (i + piece.y) + 1,
+                            game.zoom - 2,
+                            game.zoom - 2,
+                        ],
+                        2  # Border width of unfilled rect
+                    )
 
 
     #display game
