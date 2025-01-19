@@ -110,6 +110,9 @@ tile_purple = pygame.transform.scale(tile_purple_temp, (tile_size, tile_size))
 tile_red = pygame.transform.scale(tile_red_temp, (tile_size, tile_size))
 tile_yellow = pygame.transform.scale(tile_yellow_temp, (tile_size, tile_size))
 
+# Picks between Decision Tree and NN options
+option = 1
+
 while not done:
     if game.figure is None:
         game.new_figure()
@@ -173,14 +176,25 @@ while not done:
             if event.key == pygame.K_RETURN: #ignores suggestions from the CNN
                 if decision_tree_best != None:
                     
-                    for i in range(len(game.field)):
-                        for j in range(len(game.field[0])):
-                            game.field[i][j] = decision_tree_best[0][i][j]
+                    if option == 2:
+                        for i in range(len(game.field)):
+                            for j in range(len(game.field[0])):
+                                game.field[i][j] = decision_tree_best[0][i][j]
+
+                    if option == 1:
+                        for i in range(len(game.field)):
+                            for j in range(len(game.field[0])):
+                                game.field[i][j] = cnn_best[0][i][j]
                     
                     game.new_figure()
                     game.break_lines()
                     decision_tree_best = None
                     game.procNN = True
+
+            if event.key == pygame.K_TAB:
+                option += 1
+                if option > 2:
+                    option -= 2
 
 
         if event.type == pygame.KEYUP:
@@ -229,21 +243,39 @@ while not done:
 
             elif decision_tree_best is not None:
                 if decision_tree_best[0][i][j] > 0:
-                    pygame.draw.rect(screen, Color.yellow, [
-                        game.x + game.zoom * j + 6,
-                        game.y + game.zoom * i + 6,
-                        game.zoom - 12,
-                        game.zoom - 12
-                    ])
+
+                    if option == 2:
+                        pygame.draw.rect(screen, Color.yellow, [
+                            game.x + game.zoom * j + 6,
+                            game.y + game.zoom * i + 6,
+                            game.zoom - 12,
+                            game.zoom - 12
+                        ])
+                    else:
+                        pygame.draw.rect(screen, (72, 72, 72), [
+                            game.x + game.zoom * j + 6,
+                            game.y + game.zoom * i + 6,
+                            game.zoom - 12,
+                            game.zoom - 12
+                        ])
+
             if cnn_best is not None:
                 if cnn_best[0][i][j] > 0 and game.field[i][j] == 0:
-                    # draw pink highlight
-                    pygame.draw.rect(screen, (255, 20, 50), [  # hot pink, for example
-                        game.x + game.zoom * j + 3,
-                        game.y + game.zoom * i + 3,
-                        game.zoom - 6,
-                        game.zoom - 6
-                    ])
+
+                    if option == 1:
+                        pygame.draw.rect(screen, Color.yellow, [
+                            game.x + game.zoom * j + 6,
+                            game.y + game.zoom * i + 6,
+                            game.zoom - 12,
+                            game.zoom - 12
+                        ])
+                    else:
+                        pygame.draw.rect(screen, (72, 72, 72), [
+                            game.x + game.zoom * j + 6,
+                            game.y + game.zoom * i + 6,
+                            game.zoom - 12,
+                            game.zoom - 12
+                        ])
 
 
 
