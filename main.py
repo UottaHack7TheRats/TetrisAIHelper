@@ -90,6 +90,8 @@ decision_tree_best = None
 
 tile_size = 19      # This is the default value for game.zoom - 2 for padding
 
+cnn_best = []
+
 # Load image textures for tiles
 tile_blue_temp = pygame.image.load("textures/blueTile.png")
 tile_green_temp = pygame.image.load("textures/greenTile.png")
@@ -127,28 +129,28 @@ while not done:
     next_states_scored.sort()
     decision_tree_best = next_states_scored[0][1]
 
-    # CNN-based approach
-    next_states_cnn = []
+    if game.procNN:
 
-    for candidate_state in next_states:
-        board = candidate_state[0]
-        # Score from CNN
-        cnn_score = get_cnn_score_for_board(board)  # We'll define get_cnn_score_for_board() below
-        next_states_cnn.append([cnn_score, candidate_state])
+        game.procNN = False
 
-    # If bigger is better from the CNN, sort descending:
-    next_states_cnn.sort(key=lambda x: x[0], reverse=True)
+        # CNN-based approach
+        next_states_cnn = []
 
-    cnn_best = next_states_cnn[0][1]
+        for candidate_state in next_states:
+            board = candidate_state[0]
+            # Score from CNN
+            cnn_score = get_cnn_score_for_board(board)  # We'll define get_cnn_score_for_board() below
+            next_states_cnn.append([cnn_score, candidate_state])
+
+        # If bigger is better from the CNN, sort descending:
+        next_states_cnn.sort(key=lambda x: x[0], reverse=True)
+
+        cnn_best = next_states_cnn[0][1]
 
     # Move all down
     if counter % (fps // game.level // 2) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
-
-            # print("Score: ", next_states_scored[0][0])
-            # for row in next_states_scored[0][1]:
-            #     print(row)
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
