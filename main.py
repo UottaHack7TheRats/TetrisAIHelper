@@ -75,20 +75,22 @@ while not done:
     if counter > 100000:
         counter = 0
 
+    # Get best next move
+    next_states = get_next_states(game, game.figure)
+    next_states_scored = []
+
+    for state in next_states:
+        ranker = TetrisStateRanker(state)
+        score = ranker.rank_state()
+        next_states_scored.append([score, state])
+
+    next_states_scored.sort()
+    decision_tree_best = next_states_scored[0][1]
+
+    # Move all down
     if counter % (fps // game.level // 2) == 0 or pressing_down:
         if game.state == "start":
             game.go_down()
-
-            next_states = get_next_states(game, game.figure)
-            next_states_scored = []
-
-            for state in next_states:
-                ranker = TetrisStateRanker(state)
-                score = ranker.rank_state()
-                next_states_scored.append([score, state])
-
-            next_states_scored.sort()
-            decision_tree_best = next_states_scored[0][1]
 
             # print("Score: ", next_states_scored[0][0])
             # for row in next_states_scored[0][1]:
@@ -118,6 +120,8 @@ while not done:
                             game.field[i][j] = decision_tree_best[i][j]
 
                     game.new_figure()
+
+                    decision_tree_best = None
 
 
         if event.type == pygame.KEYUP:
