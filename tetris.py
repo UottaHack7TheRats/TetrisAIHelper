@@ -125,6 +125,9 @@ class Tetris:
     #def go_AI(self)
 
     def place_piece(self):
+
+        self.procNN = True
+
         try:
             for i in self.figure.image():
                     
@@ -140,8 +143,6 @@ class Tetris:
         self.new_figure()
         if self.intersects():
             self.state = "gameover"
-
-        self.procNN = True
 
     def place_piece_no_update(self):
         try:

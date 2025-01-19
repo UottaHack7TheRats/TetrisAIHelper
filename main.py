@@ -131,6 +131,8 @@ while not done:
 
     if game.procNN:
 
+        game.procNN = False
+
         # CNN-based approach
         next_states_cnn = []
 
@@ -144,8 +146,6 @@ while not done:
         next_states_cnn.sort(key=lambda x: x[0], reverse=True)
 
         cnn_best = next_states_cnn[0][1]
-
-        game.procNN = False
 
     # Move all down
     if counter % (fps // game.level // 2) == 0 or pressing_down:
