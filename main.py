@@ -79,10 +79,10 @@ while not done:
     next_states = get_next_states(game, game.figure)
     next_states_scored = []
 
-            for state in next_states:
-                ranker = TetrisStateRanker(state[0])
-                score = ranker.rank_state()
-                next_states_scored.append([score, state])
+    for state in next_states:
+        ranker = TetrisStateRanker(state[0])
+        score = ranker.rank_state()
+        next_states_scored.append([score, state])
 
     next_states_scored.sort()
     decision_tree_best = next_states_scored[0][1]
@@ -119,7 +119,7 @@ while not done:
                     
                     for i in range(len(game.field)):
                         for j in range(len(game.field[0])):
-                            game.field[i][j] = decision_tree_best[i][j]
+                            game.field[i][j] = decision_tree_best[0][i][j]
 
                     game.new_figure()
                     game.break_lines()
