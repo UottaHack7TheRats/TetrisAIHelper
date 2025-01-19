@@ -120,6 +120,7 @@ while not done:
                             game.field[i][j] = decision_tree_best[i][j]
 
                     game.new_figure()
+                    game.break_lines()
 
                     decision_tree_best = None
 
