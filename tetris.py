@@ -25,7 +25,7 @@ class Tetris:
         self.figure = None
         self.next_figure = Figure(0, 0)
 
-        # self.procNN = True
+        self.procNN = True
 
     def copy(self):
 
@@ -126,7 +126,7 @@ class Tetris:
 
     def place_piece(self):
 
-        # self.procNN = True
+        self.procNN = True
 
         try:
             for i in self.figure.image():
