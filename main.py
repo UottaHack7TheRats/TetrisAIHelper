@@ -6,7 +6,47 @@ from figure import Figure
 from tetris import Tetris
 from gameStateEvalution import TetrisStateRanker
 from moves import get_next_states
+import numpy as np
+import cv2
+from tensorflow.keras.models import load_model
+# Load your CNN
+cnn_model = load_model("tetris_model_best.keras")
+print("CNN model loaded successfully!")
 
+def board_to_cnn_input(field):
+    """
+    Convert the Tetris board (2D list) into the shape (1, 64, 32, 1)
+    for our CNN. 
+    Assumes the CNN expects grayscale images resized to (64, 32).
+    """
+    arr = np.array(field, dtype=np.uint8)  # shape: (height, width)
+    # Convert all non-zero cells to 255, keep zero cells as 0
+    # so we get a clear "occupied vs empty" representation
+    arr = np.where(arr > 0, 255, 0).astype(np.uint8)
+
+    # Resize to (height=64, width=32); 
+    # note: cv2.resize(img, (width, height)).
+    arr_resized = cv2.resize(arr, (32, 64), interpolation=cv2.INTER_NEAREST)
+
+    # Normalize [0..255] to [0..1]
+    arr_resized = arr_resized / 255.0
+
+    # Reshape to (1, 64, 32, 1)
+    arr_resized = arr_resized.reshape((1, 64, 32, 1))
+    return arr_resized
+
+def get_cnn_score_for_board(board):
+    """
+    Feeds the given board to the CNN and returns a single float "score."
+    Adapt this if your final layer has multiple neurons or is classification-based.
+    """
+    inp = board_to_cnn_input(board)   # shape: (1, 64, 32, 1)
+    pred = cnn_model.predict(inp)     # shape depends on your final Dense(...)
+
+    # Example assumption: final layer = Dense(1), so pred is shape (1,1).
+    # Use pred[0][0] as the numeric "score."
+    # If your model is classification-based, adapt accordingly!
+    return float(pred[0][0])
 
 # def get_ghost_position(figure, field):
 #     # Check where the figure will land by moving it down until it collides
@@ -86,6 +126,20 @@ while not done:
 
     next_states_scored.sort()
     decision_tree_best = next_states_scored[0][1]
+
+    # CNN-based approach
+    next_states_cnn = []
+
+    for candidate_state in next_states:
+        board = candidate_state[0]
+        # Score from CNN
+        cnn_score = get_cnn_score_for_board(board)  # We'll define get_cnn_score_for_board() below
+        next_states_cnn.append([cnn_score, candidate_state])
+
+    # If bigger is better from the CNN, sort descending:
+    next_states_cnn.sort(key=lambda x: x[0], reverse=True)
+
+    cnn_best = next_states_cnn[0][1]
 
     # Move all down
     if counter % (fps // game.level // 2) == 0 or pressing_down:
@@ -178,6 +232,14 @@ while not done:
                         game.y + game.zoom * i + 6,
                         game.zoom - 12,
                         game.zoom - 12
+                    ])
+            if cnn_best is not None:
+                if cnn_best[0][i][j] > 0:
+                    pygame.draw.rect(screen, (255, 20, 147), [  # hot pink, for example
+                        game.x + game.zoom * j + 3,
+                        game.y + game.zoom * i + 3,
+                        game.zoom - 6,
+                        game.zoom - 6
                     ])
 
 
