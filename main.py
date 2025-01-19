@@ -180,7 +180,7 @@ while not done:
                     game.new_figure()
                     game.break_lines()
                     decision_tree_best = None
-                    
+                    game.procNN = True
 
 
         if event.type == pygame.KEYUP:
