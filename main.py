@@ -48,6 +48,26 @@ pressing_down = False
 
 decision_tree_best = None
 
+tile_size = 19      # This is the default value for game.zoom - 2 for padding
+
+# Load image textures for tiles
+tile_blue_temp = pygame.image.load("textures/blueTile.png")
+tile_green_temp = pygame.image.load("textures/greenTile.png")
+tile_light_blue_temp = pygame.image.load("textures/lightBlueTile.png")
+tile_orange_temp = pygame.image.load("textures/orangeTile.png")
+tile_purple_temp = pygame.image.load("textures/purpleTile.png")
+tile_red_temp = pygame.image.load("textures/redTile.png")
+tile_yellow_temp = pygame.image.load("textures/yellowTile.png")
+
+# Resize images so they all match
+tile_blue = pygame.transform.scale(tile_blue_temp, (tile_size, tile_size))
+tile_green = pygame.transform.scale(tile_green_temp, (tile_size, tile_size))
+tile_light_blue = pygame.transform.scale(tile_light_blue_temp, (tile_size, tile_size))
+tile_orange = pygame.transform.scale(tile_orange_temp, (tile_size, tile_size))
+tile_purple = pygame.transform.scale(tile_purple_temp, (tile_size, tile_size))
+tile_red = pygame.transform.scale(tile_red_temp, (tile_size, tile_size))
+tile_yellow = pygame.transform.scale(tile_yellow_temp, (tile_size, tile_size))
+
 while not done:
     if game.figure is None:
         game.new_figure()
@@ -55,20 +75,22 @@ while not done:
     if counter > 100000:
         counter = 0
 
-    if counter % (fps // game.level // 2) == 0 or pressing_down:
-        if game.state == "start":
-            game.go_down()
-
-            next_states = get_next_states(game, game.figure)
-            next_states_scored = []
+    # Get best next move
+    next_states = get_next_states(game, game.figure)
+    next_states_scored = []
 
             for state in next_states:
                 ranker = TetrisStateRanker(state[0])
                 score = ranker.rank_state()
                 next_states_scored.append([score, state])
 
-            next_states_scored.sort()
-            decision_tree_best = next_states_scored[0][1]
+    next_states_scored.sort()
+    decision_tree_best = next_states_scored[0][1]
+
+    # Move all down
+    if counter % (fps // game.level // 2) == 0 or pressing_down:
+        if game.state == "start":
+            game.go_down()
 
             # print("Score: ", next_states_scored[0][0])
             # for row in next_states_scored[0][1]:
@@ -92,6 +114,19 @@ while not done:
                 game.go_AI()
             if event.key == pygame.K_ESCAPE:
                 game.__init__(20, 10)
+            if event.key == pygame.K_RETURN:
+                if decision_tree_best != None:
+                    
+                    for i in range(len(game.field)):
+                        for j in range(len(game.field[0])):
+                            game.field[i][j] = decision_tree_best[i][j]
+
+                    game.new_figure()
+                    game.break_lines()
+
+                    decision_tree_best = None
+
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 pressing_down = False
@@ -106,20 +141,43 @@ while not done:
                 game.zoom,
                 game.zoom
             ], 1)
+
             if game.field[i][j] > 0:
-                pygame.draw.rect(screen, Color.all_colors[game.field[i][j]], [
-                    game.x + game.zoom * j + 1,
-                    game.y + game.zoom * i + 1,
-                    game.zoom - 2,
-                    game.zoom - 2
-                ])
+
+                tile_pos_x = game.x + game.zoom * j
+                tile_pos_y = game.y + game.zoom * i
+
+                match Color.all_colors[game.field[i][j]]:
+
+                    case Color.blue:
+                        screen.blit(tile_blue, (tile_pos_x, tile_pos_y))
+
+                    case Color.green:
+                        screen.blit(tile_green, (tile_pos_x, tile_pos_y))
+
+                    case Color.light_blue:
+                        screen.blit(tile_light_blue, (tile_pos_x, tile_pos_y))
+
+                    case Color.purple:
+                        screen.blit(tile_purple, (tile_pos_x, tile_pos_y))
+
+                    case Color.red:
+                        screen.blit(tile_red, (tile_pos_x, tile_pos_y))
+
+                    case Color.orange:
+                        screen.blit(tile_orange, (tile_pos_x, tile_pos_y))
+
+                    case Color.yellow:
+                        screen.blit(tile_yellow, (tile_pos_x, tile_pos_y))
+
+
             elif decision_tree_best is not None:
                 if decision_tree_best[0][i][j] > 0:
                     pygame.draw.rect(screen, Color.yellow, [
-                        game.x + game.zoom * j + 1,
-                        game.y + game.zoom * i + 1,
-                        game.zoom - 2,
-                        game.zoom - 2
+                        game.x + game.zoom * j + 6,
+                        game.y + game.zoom * i + 6,
+                        game.zoom - 12,
+                        game.zoom - 12
                     ])
 
 
@@ -154,16 +212,38 @@ while not done:
 
 
     #display game
+    tile_size = game.zoom
+
     if game.figure is not None:
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in game.figure.image():
-                    pygame.draw.rect(screen, Color.all_colors[game.figure.color], [
-                        game.x + game.zoom * (j + game.figure.x) + 1,
-                        game.y + game.zoom * (i + game.figure.y) + 1,
-                        game.zoom - 2,
-                        game.zoom - 2
-                    ])
+
+                    tile_pos_x = game.x + game.zoom * (j + game.figure.x)
+                    tile_pos_y = game.y + game.zoom * (i + game.figure.y)
+
+                    match Color.all_colors[game.figure.color]:
+
+                        case Color.blue:
+                            screen.blit(tile_blue, (tile_pos_x, tile_pos_y))
+
+                        case Color.green:
+                            screen.blit(tile_green, (tile_pos_x, tile_pos_y))
+
+                        case Color.light_blue:
+                            screen.blit(tile_light_blue, (tile_pos_x, tile_pos_y))
+
+                        case Color.purple:
+                            screen.blit(tile_purple, (tile_pos_x, tile_pos_y))
+
+                        case Color.red:
+                            screen.blit(tile_red, (tile_pos_x, tile_pos_y))
+
+                        case Color.orange:
+                            screen.blit(tile_orange, (tile_pos_x, tile_pos_y))
+
+                        case Color.yellow:
+                            screen.blit(tile_yellow, (tile_pos_x, tile_pos_y))
 
     # Display next piece
     if game.next_figure is not None:
@@ -174,12 +254,32 @@ while not done:
         for i in range(4):
             for j in range(4):
                 if i * 4 + j in game.next_figure.image():
-                    pygame.draw.rect(screen, Color.all_colors[game.next_figure.color], [
-                        300 + game.zoom * j + 1,
-                        80 + game.zoom * i + 1,
-                        game.zoom - 2,
-                        game.zoom - 2
-                    ])
+
+                    tile_pos_x = 300 + game.zoom * j + 1
+                    tile_pos_y = 80 + game.zoom * i + 1
+
+                    match Color.all_colors[game.next_figure.color]:
+
+                        case Color.blue:
+                            screen.blit(tile_blue, (tile_pos_x, tile_pos_y))
+
+                        case Color.green:
+                            screen.blit(tile_green, (tile_pos_x, tile_pos_y))
+
+                        case Color.light_blue:
+                            screen.blit(tile_light_blue, (tile_pos_x, tile_pos_y))
+
+                        case Color.purple:
+                            screen.blit(tile_purple, (tile_pos_x, tile_pos_y))
+
+                        case Color.red:
+                            screen.blit(tile_red, (tile_pos_x, tile_pos_y))
+
+                        case Color.orange:
+                            screen.blit(tile_orange, (tile_pos_x, tile_pos_y))
+
+                        case Color.yellow:
+                            screen.blit(tile_yellow, (tile_pos_x, tile_pos_y))
 
     font = pygame.font.SysFont('Calibri', 25, True, False)
     text_score = font.render(f"Score: {game.score}", True, (255, 255, 255))
