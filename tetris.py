@@ -57,7 +57,8 @@ class Tetris:
         return ret
 
     def new_figure(self):
-        self.figure = Figure(3, 0)
+        self.figure = self.next_figure
+        self.next_figure = Figure(3, 0)
 
     def intersects(self):
 
