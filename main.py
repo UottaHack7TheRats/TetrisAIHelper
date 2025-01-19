@@ -129,23 +129,24 @@ while not done:
     next_states_scored.sort()
     decision_tree_best = next_states_scored[0][1]
 
-    if game.procNN:
+    # if game.procNN:
 
-        game.procNN = False
+    #     game.procNN = False
 
-        # CNN-based approach
-        next_states_cnn = []
+    # CNN-based approach
+    next_states_cnn = []
 
-        for candidate_state in next_states:
-            board = candidate_state[0]
-            # Score from CNN
-            cnn_score = get_cnn_score_for_board(board)  # We'll define get_cnn_score_for_board() below
-            next_states_cnn.append([cnn_score, candidate_state])
+    for candidate_state in next_states:
+        board = candidate_state[0]
+        # Score from CNN
 
-        # If bigger is better from the CNN, sort descending:
-        next_states_cnn.sort(key=lambda x: x[0], reverse=True)
+        cnn_score = get_cnn_score_for_board(board)  # We'll define get_cnn_score_for_board() below
+        next_states_cnn.append([cnn_score, candidate_state])
 
-        cnn_best = next_states_cnn[0][1]
+    # If bigger is better from the CNN, sort descending:
+    next_states_cnn.sort(key=lambda x: x[0], reverse=True)
+
+    cnn_best = next_states_cnn[0][1]
 
     # Move all down
     if counter % (fps // game.level // 2) == 0 or pressing_down:
