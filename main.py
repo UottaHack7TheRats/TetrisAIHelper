@@ -110,6 +110,16 @@ while not done:
                 game.go_space()
             if event.key == pygame.K_ESCAPE:
                 game.__init__(20, 10)
+            if event.key == pygame.K_RETURN:
+                if decision_tree_best != None:
+                    
+                    for i in range(len(game.field)):
+                        for j in range(len(game.field[0])):
+                            game.field[i][j] = decision_tree_best[i][j]
+
+                    game.new_figure()
+
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_DOWN:
                 pressing_down = False

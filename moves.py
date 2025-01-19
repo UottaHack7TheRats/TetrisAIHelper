@@ -13,10 +13,7 @@ def get_next_states(tetris: Tetris, figure: Figure):
     # Colors are stored in tetris.field, so I just swap all non zero values with 1 for ease of use
     for i in range(len(state)):
         for j in range(len(state[0])):
-            if tetris.field[i][j] == 0:
-                state[i][j] = 0
-            else:
-                state[i][j] = 1
+            state[i][j] = tetris.field[i][j]
 
     # Stores output values
     next_states = []
