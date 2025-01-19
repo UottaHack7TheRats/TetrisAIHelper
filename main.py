@@ -234,8 +234,9 @@ while not done:
                         game.zoom - 12
                     ])
             if cnn_best is not None:
-                if cnn_best[0][i][j] > 0:
-                    pygame.draw.rect(screen, (255, 20, 147), [  # hot pink, for example
+                if cnn_best[0][i][j] > 0 and game.field[i][j] == 0:
+                    # draw pink highlight
+                    pygame.draw.rect(screen, (255, 20, 50), [  # hot pink, for example
                         game.x + game.zoom * j + 3,
                         game.y + game.zoom * i + 3,
                         game.zoom - 6,
